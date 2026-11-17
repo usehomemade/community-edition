@@ -1,0 +1,26 @@
+{
+  "$schema": "https://homemade.dev/schemas/latest/config.json",
+  "warmup": [
+    "docker compose pull"
+  ],
+  "install": [
+    "docker compose pull"
+  ],
+  "services": {
+    "compose": {
+      "cmd": "exec docker compose -f compose.yml -f - up --abort-on-container-failure <<'YAML'\nservices:\n  plausible_db:\n    restart: \"no\"\n  plausible_events_db:\n    restart: \"no\"\n  plausible:\n    restart: \"no\"\n    environment:\n      SECRET_KEY_BASE: \"${SECRET_KEY_BASE}${SECRET_KEY_BASE}\"\n    ports:\n      - \"${PORT}:${HTTP_PORT}\"\nYAML",
+      "port": 8000,
+      "url": true,
+      "healthcheck": {
+        "path": "/"
+      },
+      "displayName": "Plausible CE"
+    }
+  },
+  "env_schema": [
+    "BASE_URL",
+    "SECRET_KEY_BASE",
+    "HTTP_PORT"
+  ],
+  "size": "small"
+}
